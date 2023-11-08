@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
 
     public bool isOnGround = true;
     public bool gameOver = false;
+    public bool doubleJumped = false;
 
     private Animator playerAnim;
 
@@ -22,6 +23,12 @@ public class PlayerController : MonoBehaviour
     public AudioClip crashSound;
 
     private AudioSource playerAudio;
+
+    private float score = 0;
+
+
+    private MoveLeft moveLeftScript;
+
     
     void Start()
     {
@@ -31,7 +38,8 @@ public class PlayerController : MonoBehaviour
         playerAnim = GetComponent<Animator>();
 
         playerAudio = GetComponent<AudioSource>();
-        
+
+        moveLeftScript = GameObject.Find("Background").GetComponent<MoveLeft>();
     }
 
     // Update is called once per frame
@@ -43,8 +51,28 @@ public class PlayerController : MonoBehaviour
             playerAnim.SetTrigger("Jump_trig");
             dirtParticle.Stop();
             playerAudio.PlayOneShot(jumpSound, 1.0f);
+            doubleJumped = false;
+        }
+        else if(Input.GetKeyDown(KeyCode.Space) && !gameOver && !doubleJumped){
+            playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            playerAnim.SetTrigger("Jump_trig");
+            playerAudio.PlayOneShot(jumpSound, 1.0f);
+            doubleJumped = true;
+        }
+
+        if(moveLeftScript.dashMode && !gameOver)
+        {
+            score = score + Time.deltaTime * 20;
+            Debug.Log("Score :" + ((int)score));
+        }
+        else if (!moveLeftScript.dashMode && !gameOver)
+        {
+            score = score + Time.deltaTime;
+            Debug.Log("Score :" + ((int)score));
         }
         
+        
+
     }
 
     private void OnCollisionEnter(Collision collision)

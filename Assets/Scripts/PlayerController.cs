@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
         {
             explosionParticle.Play();
             gameOver = true;
-            Debug.Log("Game Over!");
+            Debug.Log("Game Over!   Score: " + ((int)score));
 
             playerAnim.SetBool("Death_b", true);
             playerAnim.SetInteger("DeathType_int", 1);
